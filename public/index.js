@@ -45,10 +45,18 @@ io.on('connection', function(socket) {
     if (user != null) {
       var incoming = new chatroom.Message(user.username, message.body, user.room);
       //io.emit("incoming message", incoming);
+      user.room.postMessage(new chatroom.Message(user.username, message.body));
       messageHandler.sendIt(incoming);
     }
     else {
       console.log("A user with token " + message.token + " failed to send a message");
+    }
+  });
+  socket.on('msg req', function(tkn) {
+    var usr = server.getUserByToken(tkn);
+    var room = usr.room;
+    for (var i = 0; i<room.messages.length; i++) {
+      this.emit('incoming message', room.messages[i]);
     }
   });
 });
@@ -56,6 +64,7 @@ io.on('connection', function(socket) {
 messageHandler = {
   mySockets: [],
   sendIt: function(message) {
+    console.log(message.author + " (Room #" + message.room.id + ")" + ": " + message.body);
     for (var i = 0; i<this.mySockets.length; i++) {
       if (message.room == this.mySockets[i].room) {
         try {

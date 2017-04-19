@@ -1,5 +1,3 @@
-gui = new GUI();
-
 function GUI() {
 
   //Blocker
@@ -124,5 +122,31 @@ function GUI() {
   //Chat Stuff
   this.messageBox = document.getElementById("message-text");
   this.sendButton = document.getElementById("sendbutton");
+  this.messageDisplay = document.getElementById("message-box");
+
+  //Displaying messages
+  this.createMessageBlock = function(message) {
+    var block = document.createElement("div");
+    block.className = "message";
+
+    block.authorLabel = document.createElement("div");
+    block.authorLabel.className = "author";
+    block.authorLabel.appendChild(document.createTextNode(message.author));
+
+    block.timeStamp = document.createElement("span");
+    block.timeStamp.className = "time";
+    var d = new Date(message.timeStamp);
+    block.timeStamp.appendChild(document.createTextNode(d.getHours()+":"+d.getMinutes()));
+
+    block.body = document.createElement("div");
+    block.body.className = "body";
+    block.body.appendChild(document.createTextNode(message.body));
+
+    block.authorLabel.appendChild(block.timeStamp);
+    block.appendChild(block.authorLabel);
+    block.appendChild(block.body);
+
+    return block;
+  };
 
 }

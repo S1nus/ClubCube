@@ -22,11 +22,11 @@
       socket = io();
       socket.on('token', function(tkn) {
         if (tkn) {
-            alert('aight ' + tkn);
             token = tkn;
             gui.dBox.hide();
             gui.Blocker.down();
             gui.sendButton.addEventListener("click", sendMessage);
+            this.emit("msg req", token);
         }
         else {
           gui.dBox.wiggle();
@@ -36,7 +36,10 @@
         }
       });
       socket.on('incoming message', function(message) {
-        alert(message.author + ": " + message.body);
+        var block = gui.createMessageBlock(message);
+        gui.messageDisplay.appendChild(block);
+        var scrollHeight = Math.max(block.scrollHeight, block.clientHeight);
+        block.scrollTop = scrollHeight - block.clientHeight;
       });
       token = '';
       gui.Blocker.up();
@@ -89,7 +92,6 @@
 <body>
   <div id="chat-wrapper">
     <div id="message-box">
-
     </div>
     <div id="panel">
       <input type="text" id="message-text"/>
