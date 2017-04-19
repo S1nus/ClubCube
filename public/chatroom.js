@@ -6,19 +6,14 @@ m = module.exports = {
     this.createAccount = function(username, password) {
       for (var i = 0; i<this.registeredAccounts.length; i++) {
         if (this.registeredAccounts[i].username == username) {
-          console.log("Failed attempt to create account named" + username);
+          console.log("Failed attempt to create account named " + username);
           return false;
         }
       }
       this.registeredAccounts.push(new m.Account(username, password, this.rooms[0]));
-      try {
-        this.login(username, password);
-      }
-      catch (e) {
-        console.log("couldn't log in. Huh.");
-      }
+      var tok = this.login(username, password);
       console.log("Welcome new user " + username);
-      return true;
+      return tok;
     };
 
     this.login = function(username, password) {
@@ -114,11 +109,12 @@ m = module.exports = {
     };
   },
 
-  Message : function(author, body) {
+  Message : function(author, body, room=null) {
     this.author = author;
     this.body = body;
     this.timeStamp = Date.now();
     this.deleted = false;
+    this.room = room;
     this.delete = function() {
       this.deleted = true;
       this.body = "";

@@ -1,6 +1,10 @@
 * {
  box-sizing: border-box;
 }
+html {
+  margin: 0;
+  padding: 0;
+}
 body {
   background: repeating-linear-gradient(
     90deg,
@@ -10,40 +14,35 @@ body {
     rgb(100, 100, 250) 20px
   );
   font-family: "Arial", sans-serif;
-  margin: 0;
-  padding: 0;
 }
 #chat-wrapper {
   display: block;
   background-color: rgba(255, 255, 255, .7);
   margin: 0 auto;
-  height: 100%;
+  height: 99%;
   width: 500px;
-  position: relative;
 }
 
 #message-box {
-  display: block;
-  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 90%;
+  position: relative;
   width: 95%;
-  /* Firefox */
-  height: -moz-calc(100% - 65px);
-  /* WebKit */
-  height: -webkit-calc(100% - 65px);
-  /* Opera */
-  height: -o-calc(100% - 65px);
-  /* Standard */
-  height: calc(100% - 65px);
-  background-color: rgb(50, 50, 120);
+  overflow: auto;
+  top: 1%;
+  margin: 0 auto;
+  background-color: rgba(255, 150, 100, .7);
 }
 
 #panel {
     display: block;
-    position: absolute;
-    bottom: 15px;
-    left: 2.5%;
+    flex: 1;
+    position: relative;
     width: 95%;
-    height: 40px;
+    height: 30px;
+    bottom: 0;
+    margin: 20px auto;
 }
 
 #panel input[type=text] {
@@ -94,7 +93,7 @@ body {
   background-color: rgba(0, 0, 0, .7);
 }
 
-.dialogueBox {
+.nameBox {
   position: fixed;
   z-index: 9000;
   display: block;
@@ -107,7 +106,7 @@ body {
   padding-bottom: 10px;
 }
 
-.dialogueBox input[type="text"], input[type="password"] {
+.nameBox input[type="text"], input[type="password"] {
   margin: 20px auto;
   width: 70%;
   height: 34px;
@@ -117,7 +116,7 @@ body {
   border-radius: 3px;
 }
 
-.dialogueBox button {
+.nameBox button {
   outline: none;
   margin: 10px auto;
   cursor: pointer;
@@ -127,11 +126,11 @@ body {
   border-radius: 3px;
 }
 
-.dialogueBox button:hover {
+.nameBox button:hover {
   background-color: darkgrey;
 }
 
-.dialogueBox a {
+.nameBox a {
   text-decoration: underline;
   color: black;
   font-weight: normal;
@@ -139,7 +138,7 @@ body {
   cursor: pointer;
 }
 
-.dialogueBox a:hover {
+.nameBox a:hover {
   font-weight: bold;
 }
 
@@ -171,7 +170,7 @@ body {
   #chat-wrapper {
     width: 99%;
   }
-  .dialogueBox {
+  .nameBox {
     width: 99%;
     margin-left: -49.5%;
   }

@@ -17,35 +17,35 @@ app.get(/^(.+)$/, function(req, res) {
 
 io.on('connection', function(socket) {
   console.log("A client has connected");
+  messageHandler.mySockets.push(socket);
+  socket.room = null;
   socket.on('disconnect', function() {
+    var index = messageHandler.mySockets.indexOf(this);
+    messageHandler.mySockets.splice(index, 1);
     console.log("A client has disconnected");
   });
   socket.on('signup attempt', function(attempt){
-    if (server.createAccount(attempt.username, attempt.password)) {
-      var user = server.getUser(attempt.username);
-      this.emit('token', user.token);
-      user.room.sockets.push(this);
-    }
-    else {
-      this.emit('token', false);
+    var tok = server.createAccount(attempt.username, attempt.password);
+    this.emit('token', tok);
+    var usr = server.getUserByToken(tok);
+    if (usr != null) {
+      this.room = usr.room;
     }
   });
   socket.on('login attempt', function(attempt) {
-    if (server.login(attempt.username, attempt.password)) {
-      var user = server.getUser(attempt.username);
-      this.emit('token', user.token);
-      user.room.sockets.push(this);
+    var tok = server.login(attempt.username, attempt.password);
+    if (tok) {
+      var usr = server.getUserByToken(tok);
+      this.room = usr.room;
     }
-    else {
-      this.emit('token', false);
-    }
+    this.emit('token', tok);
   });
   socket.on('outgoing message', function(message) {
     var user = server.getUserByToken(message.token);
     if (user != null) {
-      var incoming = new chatroom.Message(user, message.body);
+      var incoming = new chatroom.Message(user.username, message.body, user.room);
       //io.emit("incoming message", incoming);
-      sendItOut(user, incoming);
+      messageHandler.sendIt(incoming);
     }
     else {
       console.log("A user with token " + message.token + " failed to send a message");
@@ -53,12 +53,21 @@ io.on('connection', function(socket) {
   });
 });
 
-function sendItOut(user, message) {
-  console.log("Sending '"+message.body+"' to room #"+user.room.id);
-  for (var i = 0; i<user.room.sockets.length; i++) {
-    console.log(user.room.sockets[i].emit('incoming message', message));
+messageHandler = {
+  mySockets: [],
+  sendIt: function(message) {
+    for (var i = 0; i<this.mySockets.length; i++) {
+      if (message.room == this.mySockets[i].room) {
+        try {
+          this.mySockets[i].emit("incoming message", message);
+        }
+        catch (e) {
+          console.log(e.message);
+        }
+      }
+    }
   }
-}
+};
 
 http.listen(3000, function() {
   console.log('listening on *:3000');
