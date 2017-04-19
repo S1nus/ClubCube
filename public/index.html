@@ -1,0 +1,230 @@
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://www.gstatic.com/firebasejs/3.7.5/firebase.js"></script>
+  <script>
+    // Initialize Firebase
+    config = {
+      apiKey: "AIzaSyDzV4W8iu89XpS86Dw325UoSTj0w3mUFjg",
+      authDomain: "clubcube-43c51.firebaseapp.com",
+      databaseURL: "https://clubcube-43c51.firebaseio.com",
+      projectId: "clubcube-43c51",
+      storageBucket: "clubcube-43c51.appspot.com",
+      messagingSenderId: "661410385302"
+    };
+    firebase.initializeApp(config);
+  </script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function() {
+      socket = io();
+      socket.on('incoming message', function(message) {
+        newMessage = document.createElement("div");
+        newMessage.className = "message";
+        author = document.createElement("div");
+        author.className = "author";
+        author.appendChild(document.createTextNode(message.author.username));
+        timeStamp = document.createElement("span");
+        timeStamp.className = "time";
+        timeStamp.appendChild(document.createTextNode(new Date(message.timeStamp).getHours()+":"+new Date(message.timeStamp).getMinutes()));
+        newMessage.appendChild(author);
+        author.appendChild(timeStamp);
+        newMessage.appendChild(document.createTextNode(message.body.replace(/[\u00A0-\u9999<>\&]/gim, function(i) { return '&#'+i.charCodeAt(0)+';';})));
+        document.getElementById("message-box").appendChild(newMessage);
+      });
+      socket.on('token', function(result) {
+        if (result) {
+          setCookie("token", result, 1);
+          clearDialogue();
+        }
+        else {
+          wiggleBox();
+        }
+      });
+
+      button = document.getElementById("sendbutton");
+      textBox = document.getElementById("message-text");
+
+      blocker = document.createElement("div");
+      blocker.className = "blocker";
+
+      button.addEventListener("click", sendMessage);
+      document.addEventListener("keydown", function(e) {
+        if (e.keyCode == 13) {
+          sendMessage();
+        }
+      });
+
+      if (getCookie("token") == "") {
+        showSignup();
+      }
+    });
+
+    function OutgoingMessage(token, body) {
+      this.token = token;
+      this.body = body;
+    }
+    function IncomingMessage(author, body) {
+      this.author = author;
+      this.body = body;
+    }
+
+    function setCookie(cname, cvalue, exdays) {
+      d = new Date();
+      d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+      expires = "expires="+d.toUTCString();
+      document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
+
+    function getCookie(cname) {
+      name = cname + "=";
+      ca = document.cookie.split(';');
+      for(i = 0; i < ca.length; i++) {
+          c = ca[i];
+          while (c.charAt(0) == ' ') {
+              c = c.substring(1);
+          }
+          if (c.indexOf(name) == 0) {
+              return c.substring(name.length, c.length);
+          }
+      }
+      return "";
+    }
+    function sendMessage() {
+      if (getCookie('token') != '') {
+        var outgoing = new OutgoingMessage(getCookie("token"), textBox.value);
+        socket.emit('outgoing message', outgoing);
+      }
+      else {
+        console.log("Can't send a message without being logged in");
+      }
+    }
+    function disablePage() {
+      try {
+        document.body.appendChild(blocker);
+      }
+      catch (e) {
+        console.log(e.message);
+      }
+    }
+    function enablePage() {
+      try {
+        document.body.removeChild(blocker);
+      }
+      catch (e) {
+        console.log(e.message);
+      }
+    }
+    function showSignup() {
+      clearDialogue();
+      dialogueBox = document.createElement("div");
+      dialogueBox.className = "nameBox";
+        unameBox = document.createElement("input");
+          unameBox.type = "text";
+          unameBox.placeholder = "username";
+          dialogueBox.appendChild(unameBox);
+        pwordBox = document.createElement("input");
+          pwordBox.type = "password";
+          pwordBox.placeholder = "password";
+          dialogueBox.appendChild(pwordBox);
+        confirmPwordBox = document.createElement("input");
+          confirmPwordBox.type = "password";
+          confirmPwordBox.placeholder = "confirm password";
+          dialogueBox.appendChild(confirmPwordBox);
+        gobutton = document.createElement("button");
+          gobutton.appendChild(document.createTextNode("join"));
+          gobutton.addEventListener("click", signup);
+          dialogueBox.appendChild(gobutton);
+        loginLink = document.createElement("a");
+          loginLink.appendChild(document.createTextNode("or log in"));
+          loginLink.addEventListener("click", function(e) {
+            e.preventDefault();
+            showLogin();
+          });
+          dialogueBox.appendChild(loginLink);
+      disablePage();
+      document.body.appendChild(dialogueBox);
+    }
+    function showLogin() {
+      clearDialogue();
+      dialogueBox = document.createElement("div");
+      dialogueBox.className = "nameBox";
+        unameBox = document.createElement("input");
+          unameBox.type = "text";
+          unameBox.placeholder = "username";
+          dialogueBox.appendChild(unameBox);
+        pwordBox = document.createElement("input");
+          pwordBox.type = "password";
+          pwordBox.placeholder = "password";
+          dialogueBox.appendChild(pwordBox);
+        gobutton = document.createElement("button");
+          gobutton.appendChild(document.createTextNode("log in"));
+          gobutton.addEventListener("click", login);
+          dialogueBox.appendChild(gobutton);
+        loginLink = document.createElement("a");
+          loginLink.appendChild(document.createTextNode("or join"));
+          loginLink.addEventListener("click", function(e) {
+            e.preventDefault();
+            showSignup();
+          });
+          dialogueBox.appendChild(loginLink);
+      disablePage();
+      document.body.appendChild(dialogueBox);
+    }
+    function clearDialogue() {
+      try {
+        document.body.removeChild(dialogueBox);
+      }
+      catch (e) {
+        //lol don't have a cow man
+      }
+      enablePage();
+    }
+    function signup() {
+      if (pwordBox.value != confirmPwordBox.value) {
+        pwordBox.value = '';
+        confirmPwordBox.value = '';
+        wiggleBox();
+      }
+      else {
+        var attempt = {username:unameBox.value, password:pwordBox.value};
+        socket.emit('signup attempt', attempt);
+      }
+    }
+    function login() {
+      var attempt = {username: unameBox.value, password:pwordBox.value};
+      socket.emit('login attempt', attempt);
+    }
+    function wiggleBox() {
+      try {
+        dialogueBox.className = "nameBox wiggling";
+        pwordBox.value = '';
+        confirmPwordBox.value = '';
+        setTimeout(function() {
+          dialogueBox.className = "nameBox";
+        }, 625);
+      }
+      catch (e) {
+        console.log("failed to wiggle the box");
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="desktop.css" />
+</head>
+<body>
+  <div id="chat-wrapper">
+    <div id="message-box">
+      <!--
+      <div class="message">
+        <div class="author" style="color: red;">Connor<span class="time">9:00PM</span></div>
+        <div class="body">Wow this is a gay-ass chat app. Blah blah bla bla blab bla bla bla blab a</div>
+      </div>
+      -->
+    </div>
+    <div id="panel">
+      <input type="text" id="message-text"/>
+      <button id="sendbutton">send</button>
+    </div>
+  </div>
+</body>
+</html>

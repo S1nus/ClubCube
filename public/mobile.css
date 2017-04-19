@@ -1,0 +1,23 @@
+* {
+  box-sizing: border-box;
+}
+html {
+  margin: 0;
+  padding: 0;
+}
+body {
+  background: repeating-linear-gradient(
+    90deg,
+    rgb(120, 120, 200),
+    rgb(120, 120, 200) 10px,
+    rgb(100, 100, 250) 10px,
+    rgb(100, 100, 250) 20px
+  );
+}
+#chat-wrapper {
+  display: block;
+  background-color: rgba(255, 255, 255, .7);
+  margin: 0 auto;
+  height: 99%;
+  width: 100%;
+}

@@ -1,0 +1,177 @@
+* {
+ box-sizing: border-box;
+}
+html {
+  margin: 0;
+  padding: 0;
+}
+body {
+  background: repeating-linear-gradient(
+    90deg,
+    rgb(120, 120, 200),
+    rgb(120, 120, 200) 10px,
+    rgb(100, 100, 250) 10px,
+    rgb(100, 100, 250) 20px
+  );
+  font-family: "Arial", sans-serif;
+}
+#chat-wrapper {
+  display: block;
+  background-color: rgba(255, 255, 255, .7);
+  margin: 0 auto;
+  height: 99%;
+  width: 500px;
+}
+
+#message-box {
+  display: flex;
+  flex-direction: column;
+  min-height: 90%;
+  position: relative;
+  width: 95%;
+  overflow: auto;
+  top: 1%;
+  margin: 0 auto;
+  background-color: rgba(255, 150, 100, .7);
+}
+
+#panel {
+    display: block;
+    flex: 1;
+    position: relative;
+    width: 95%;
+    height: 30px;
+    bottom: 0;
+    margin: 20px auto;
+}
+
+#panel input[type=text] {
+  height: 100%;
+  width: 75%;
+  border-radius: 20px;
+  outline: none;
+}
+
+#panel button {
+  float: right;
+  height: 100%;
+  width: 20%;
+  outline: none;
+  border-radius: 20px;
+}
+
+.author .time {
+  float: right;
+  color: darkblue;
+}
+.message {
+  display: block;
+  overflow-wrap: break-word;
+  width: 100%;
+  padding: 1px 10px;
+  font-size: 14px;
+}
+.message:nth-child(odd) {
+  background-color: rgb(255, 150, 100);
+}
+.message:nth-child(even) {
+  background-color: rgb(200, 100, 50);
+}
+
+.message .author {
+  font-weight: bold;
+}
+
+.blocker {
+  width: 100%;
+  height: 100%;
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 8999;
+  background-color: rgba(0, 0, 0, .7);
+}
+
+.nameBox {
+  position: fixed;
+  z-index: 9000;
+  display: block;
+  width: 400px;
+  top: 150px;
+  left: 50%;
+  margin-left: -200px;
+  background-color: white;
+  text-align: center;
+  padding-bottom: 10px;
+}
+
+.nameBox input[type="text"], input[type="password"] {
+  margin: 20px auto;
+  width: 70%;
+  height: 34px;
+  padding: 5px;
+  display: block;
+  outline: none;
+  border-radius: 3px;
+}
+
+.nameBox button {
+  outline: none;
+  margin: 10px auto;
+  cursor: pointer;
+  width: 50%;
+  height: 34px;
+  display: block;
+  border-radius: 3px;
+}
+
+.nameBox button:hover {
+  background-color: darkgrey;
+}
+
+.nameBox a {
+  text-decoration: underline;
+  color: black;
+  font-weight: normal;
+  margin: 10px auto;
+  cursor: pointer;
+}
+
+.nameBox a:hover {
+  font-weight: bold;
+}
+
+@keyframes wiggle {
+  0% {
+    margin-left: -200px;
+  }
+  25% {
+    margin-left: -205px;
+  }
+  50% {
+    margin-left: -200px;
+  }
+  75% {
+    margin-left: -195px;
+  }
+  100% {
+    margin-left: -200px;
+  }
+}
+
+.wiggling {
+  animation-name: wiggle;
+  animation-duration: .125s;
+  animation-iteration-count: 6;
+}
+
+@media screen and (max-width: 760px) {
+  #chat-wrapper {
+    width: 99%;
+  }
+  .nameBox {
+    width: 99%;
+    margin-left: -49.5%;
+  }
+}
