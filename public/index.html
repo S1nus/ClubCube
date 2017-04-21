@@ -20,6 +20,12 @@
     document.addEventListener("DOMContentLoaded", function() {
       gui = new GUI();
       socket = io();
+      target = signup;
+      document.body.addEventListener("keydown", function(e) {
+        if (e.keyCode == 13) {
+          target();
+        }
+      });
       socket.on('token', function(tkn) {
         if (tkn) {
             token = tkn;

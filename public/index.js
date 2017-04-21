@@ -42,11 +42,14 @@ io.on('connection', function(socket) {
   });
   socket.on('outgoing message', function(message) {
     var user = server.getUserByToken(message.token);
-    if (user != null) {
+    if (user != null && message.body!="") {
       var incoming = new chatroom.Message(user.username, message.body, user.room);
       //io.emit("incoming message", incoming);
       user.room.postMessage(new chatroom.Message(user.username, message.body));
       messageHandler.sendIt(incoming);
+    }
+    else if (message.body=="") {
+      //blank message
     }
     else {
       console.log("A user with token " + message.token + " failed to send a message");

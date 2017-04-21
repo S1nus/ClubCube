@@ -62,6 +62,7 @@ function GUI() {
   this.dBox.hide = function() {
     try {
       document.body.removeChild(this);
+      target = sendMessage;
     }
     catch (e) {
       console.log(e.message);
@@ -88,6 +89,7 @@ function GUI() {
       });
       this.appendChild(this.button);
       this.appendChild(this.loginLink);
+      target = login;
       e.preventDefault();
     }
     catch (e) {
@@ -112,6 +114,7 @@ function GUI() {
       });
       this.appendChild(this.button);
       this.appendChild(this.loginLink);
+      target = signup;
       e.preventDefault();
     }
     catch (e) {
@@ -136,7 +139,7 @@ function GUI() {
     block.timeStamp = document.createElement("span");
     block.timeStamp.className = "time";
     var d = new Date(message.timeStamp);
-    block.timeStamp.appendChild(document.createTextNode(d.getHours()+":"+d.getMinutes()));
+    block.timeStamp.appendChild(document.createTextNode(d.getHours()+":"+('0'+d.getMinutes()).slice(-2)));
 
     block.body = document.createElement("div");
     block.body.className = "body";
