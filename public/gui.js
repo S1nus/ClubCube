@@ -132,6 +132,8 @@ function GUI() {
     var block = document.createElement("div");
     block.className = "message";
 
+    block.style.backgroundColor = "rgb("+message.color.r+","+message.color.g+","+message.color.b+")";
+
     block.authorLabel = document.createElement("div");
     block.authorLabel.className = "author";
     block.authorLabel.appendChild(document.createTextNode(message.author));

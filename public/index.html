@@ -70,6 +70,10 @@
       var message = {token: token, body: gui.messageBox.value};
       socket.emit("outgoing message", message);
       gui.messageBox.value = '';
+      gui.sendButton.disabled = true;
+      setTimeout(function() {
+        gui.sendButton.disabled = false;
+      }, 100);
     }
     function setCookie(cname, cvalue, exdays) {
       d = new Date();
