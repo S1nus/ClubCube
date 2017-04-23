@@ -24,7 +24,7 @@ io.on('connection', function(socket) {
     messageHandler.mySockets.splice(index, 1);
     console.log("A client has disconnected");
   });
-  socket.on('signup attempt', function(attempt){
+  socket.on('signup attempt', function(attempt) {
     var tok = server.createAccount(attempt.username, attempt.password);
     this.emit('token', tok);
     var usr = server.getUserByToken(tok);
@@ -41,19 +41,27 @@ io.on('connection', function(socket) {
     this.emit('token', tok);
   });
   socket.on('outgoing message', function(message) {
-    var user = server.getUserByToken(message.token);
-    if (user != null && message.body!="") {
-      var incoming = new chatroom.Message(user.username, message.body, user.room);
-      //io.emit("incoming message", incoming);
-      user.room.postMessage(new chatroom.Message(user.username, message.body));
-      messageHandler.sendIt(incoming);
+    var message = server.generateIncomingMessage(message, function(msg) {
+      try {
+        if (msg.author!=null && msg.body != "") {
+          messageHandler.sendIt(msg);
+        }
+        else {
+          console.log(msg.author + " " + msg.body);
+        }
+      }
+      catch (e) {
+      }
+    });
+    /*if (message.username != null && message.body != "") {
+      messageHandler.sendIt(message);
     }
     else if (message.body=="") {
       //blank message
     }
     else {
-      console.log("A user with token " + message.token + " failed to send a message");
-    }
+      console.log(message);
+    }*/
   });
   socket.on('msg req', function(tkn) {
     var usr = server.getUserByToken(tkn);

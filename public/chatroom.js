@@ -57,7 +57,15 @@ m = module.exports = {
         }
       }
       return null;
-    }
+    };
+
+    this.generateIncomingMessage = function(ogMessage, callback) {
+      var user = this.getUserByToken(ogMessage.token);
+      if (user != null && ogMessage.body!="") {
+        callback(new m.Message(user.username, ogMessage.body, user.room, user.color));
+      }
+      callback(null);
+    };
   },
 
   Account : function (username, password, room=null) {
@@ -71,6 +79,7 @@ m = module.exports = {
     };
     this.room = room;
     this.online = false;
+    this.color = {'r': Math.floor(Math.random()*256), 'g': Math.floor(Math.random()*256), 'b': Math.floor(Math.random()*256)};
     this.say = function(body) {
       if (this.online) {
         if (this.room != null) {
@@ -109,8 +118,9 @@ m = module.exports = {
     };
   },
 
-  Message : function(author, body, room=null) {
+  Message : function(author, body, room=null, color=null) {
     this.author = author;
+    this.color = color;
     this.body = body;
     this.timeStamp = Date.now();
     this.deleted = false;
